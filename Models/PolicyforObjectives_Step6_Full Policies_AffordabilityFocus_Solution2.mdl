@@ -1,0 +1,1383 @@
+{UTF-8}
+additional housing demand for relocation=
+	IF THEN ELSE( Policy Relocation program Switch>0.9, Available Relocation housing base 2010\
+		*additional relocation housing factor, 0)
+	~	
+	~		|
+
+Relocated=
+	IF THEN ELSE(Policy Relocation program Switch > 0.9, IF THEN ELSE(People with No Settlements\
+		>0, IF THEN ELSE(Population Settled in Government Subsidized Housing
+	< (Available Relocation housing base 2010 + additional housing demand for relocation\
+		)
+	*BASE Average Household size, New Relocation rate*People with No Settlements, 0), 0)\
+		, IF THEN ELSE(People with No Settlements
+	>0, IF THEN ELSE(Population Settled in Government Subsidized Housing< Available Relocation housing base 2010
+	*BASE Average Household size, Relocation Rate*People with No Settlements, 0), 0))
+	~	Persons/Year
+	~	F THEN ELSE(People with No Settlements>0, IF THEN ELSE(Conversion to Residential \
+		Land>0, People with No Settlements * Relocation Housing PROGRAM,
+		        (IF THEN ELSE(Reconversion Flow from Urban Non Residential to Residential \
+		Area > 0,
+				(IF THEN ELSE(Reconversion Flow from Urban Non Residential to \
+		Residential Area> Total additional Land demand, People with No Settlements \
+		* Relocation Housing PROGRAM, "allocation of non-residential for \
+		reconversion for relocation" * Subsidized Constrcuted to Actual Area \
+		PROGRAM/ Housing area per household * size of urban housing PROGRAM)), \
+		0))), 0)
+	|
+
+effect on relocation rate=
+	1.5
+	~	Dmnl
+	~		|
+
+New Relocation rate=
+	IF THEN ELSE(Time >Relocation policy start year, Relocation Rate*effect on relocation rate\
+		, Relocation Rate)
+	~	Dmnl
+	~		|
+
+additional relocation housing factor=
+	3.5
+	~	Dmnl
+	~		|
+
+Total additional Land demand=
+	IF THEN ELSE(Policy High rise Program switch>0.9, IF THEN ELSE(additional housing demand\
+		>0, Housing area per household*
+	(additional housing demand + additional housing demand for relocation)/New Floor Area Ratio\
+		, 0), IF THEN ELSE(additional housing demand>0, Housing area per household
+	*(additional housing demand + additional housing demand for relocation)/Floor Area Ratio\
+		, 0))
+	~	SqKm/Year
+	~	Housing area per household*(( Homeless Families Entering Subsidized \
+		Housing) / Floor Area Ratio POLICY) +construction normal housing + \
+		(construction vertical housing / Floor Area Ratio POLICY))
+	|
+
+Relocation policy start year=
+	2020
+	~	Year
+	~		|
+
+constructing=
+	IF THEN ELSE(Conversion to Residential Land>0, DELAY3(additional housing demand+(Conversion to Residential Land\
+		/Housing area per household + additional housing demand for relocation
+	)
+	, house construction time), 0)
+	~	Houses/Year
+	~		|
+
+Policy Relocation program Switch=
+	0.99
+	~	Dmnl
+	~		|
+
+Accelerated city growth program switch=
+	0.79
+	~	Dmnl
+	~		|
+
+Policy High rise Program switch=
+	0.14
+	~	Dmnl
+	~		|
+
+Austerity effect on inflation=
+	3.6
+	~	Dmnl
+	~		|
+
+Austerity Policy Program Switch=
+	0.46
+	~	Dmnl
+	~		|
+
+Auterity implementation year=
+	2034
+	~	Year
+	~		|
+
+Slum reconversion Rate=
+	IF THEN ELSE(Time>Slum reconv polict start year, Base Slum reconversion rate*effect of reconversion rate on Policy\
+		, Base Slum reconversion rate)
+	~	Dmnl
+	~		|
+
+reconv policy start year=
+	2022
+	~	Year
+	~		|
+
+Reconversion Flow from Urban Non Residential to Residential Area=
+	IF THEN ELSE(Austerity Policy Program Switch>0.9, IF THEN ELSE( Available Area<1, IF THEN ELSE\
+		(Total additional Land demand>0, IF THEN ELSE( Urban Non Residential Area> 
+	0, Non economic Reconv rate*Urban Non Residential Area, 0), 0), 0), IF THEN ELSE( Available Area\
+		<1, IF THEN ELSE(Total additional Land demand>0, IF THEN ELSE( Urban Non Residential Area\
+		> 
+	0, Base Non Economic Reconv rate*Urban Non Residential Area, 0), 0), 0))
+	~	SqKm/Year
+	~		|
+
+reconversion of green area=
+	IF THEN ELSE(Accelerated city growth program switch>0.9, IF THEN ELSE( Available Area\
+		<1, IF THEN ELSE(Total additional Land demand>0, IF THEN ELSE( Green Area> 0, green reconv rate\
+		*Green Area, 0), 0), 0), IF THEN ELSE( Available Area<1, IF THEN ELSE(Total additional Land demand\
+		>0, IF THEN ELSE( Green Area> 0, Base Green Area Reconversion rate
+	*Green Area, 0), 0), 0))
+	~	SqKm/Year
+	~	IF THEN ELSE(Reconversion of Slums <1e-008, IF THEN ELSE( Available \
+		Area<5, IF THEN ELSE( Green Area > 0, DELAY3(Total additional Land demand, \
+		average green area demolition period), 0 ),0),0)
+	|
+
+Reconversion of Slums=
+	IF THEN ELSE(Policy reconversion of Slums Switch>0.9, IF THEN ELSE(Slum Area>0, DELAY3\
+		( Slum reconversion Rate*Slum Area, Average slum Demolition Period) , 0), IF THEN ELSE\
+		(Slum Area>0, DELAY3( Base Slum reconversion rate*Slum Area, Average slum Demolition Period\
+		) , 0))
+	~	SqKm/Year
+	~	SMOOTH(IF THEN ELSE(Slum Area>0, IF THEN ELSE(Available Area>5, DELAY3( Slum \
+		Area*Reconversion of Slum PROGRAM , Average Demolition Period )
+		,
+		DELAY3(Slum Area*Reconversion of Slum PROGRAM + Total additional Land demand, \
+		Average Demolition Period
+		)),0) , 0.25)
+	|
+
+Non economic Reconv rate=
+	IF THEN ELSE(Time> reconv policy start year, Base Non Economic Reconv rate * effect on non resi reconv of policy\
+		, Base Non Economic Reconv rate)
+	~	
+	~		|
+
+Updated uncertainty of inflation=
+	IF THEN ELSE(Time>Auterity implementation year, uncertainty of average percent of inflation effect\
+		/Austerity effect on inflation, uncertainty of average percent of inflation effect)
+	~	Dmnl
+	~		|
+
+effect on non resi reconv of policy=
+	5
+	~	Dmnl
+	~		|
+
+increase in FAR=
+	1.42
+	~	Dmnl
+	~		|
+
+Green reconv policy start=
+	2040
+	~	Year
+	~		|
+
+effect of green recov=
+	4
+	~	Dmnl
+	~		|
+
+effect of reconversion rate on Policy=
+	4.9
+	~	Dmnl
+	~		|
+
+Slum reconv polict start year=
+	2025
+	~	Year
+	~		|
+
+Policy reconversion of Slums Switch=
+	1
+	~	
+	~		|
+
+rate of inflation effect=
+	IF THEN ELSE(Austerity Policy Program Switch>0.9, Updated uncertainty of inflation *\
+		 cumulative effect of inflation, uncertainty of average percent of inflation effect\
+		 * cumulative effect of inflation)
+	~	
+	~		|
+
+New Payement to Income ratio=
+	IF THEN ELSE(Time>Housing Finane Policy start year, average payment to income ratio for housing\
+		/Housing finance effect on household spendings, average payment to income ratio for housing\
+		)
+	~	
+	~		|
+
+green reconv rate=
+	IF THEN ELSE(Time > Green reconv policy start, Base Green Area Reconversion rate * effect of green recov\
+		, Base Green Area Reconversion rate)
+	~	Dmnl
+	~		|
+
+New Floor Area Ratio=
+	IF THEN ELSE(Time>FAR implementation year, Floor Area Ratio * increase in FAR, Floor Area Ratio\
+		)
+	~	Dmnl
+	~		|
+
+FAR implementation year=
+	2037
+	~	Year
+	~		|
+
+Housing finance effect on household spendings=
+	4.4
+	~	Dmnl
+	~		|
+
+Average Spending Capacity for houses=
+	IF THEN ELSE(Housing Finance Policy Program Switch>0.9, median household income*New Payement to Income ratio\
+		, median household income*(average payment to income ratio for housing))
+	~	euro/households
+	~		|
+
+Housing Finance Policy Program Switch=
+	0.99
+	~	Dmnl
+	~		|
+
+Housing Finane Policy start year=
+	2023
+	~	Year
+	~		|
+
+Renting Houses=
+	IF THEN ELSE(Houses Available>1, MIN(Immigration*Ratio of Renting to Buying*Influence of affordability on urban settlement level
+	,Houses Available*BASE Average Household size), 0)
+	~	Persons/Year
+	~	DELAY3( People Entering City*Ratio of Renting to Buying*Influence of \
+		affordability on urban settlement level, 1)
+	|
+
+Conversion to Slums=
+	MAX( IF THEN ELSE(Available Area>1, IF THEN ELSE(Moving to Slum>0, DELAY3(Slum conversion demand\
+		, Average Slum Construction period), 0), 0), 0)
+	~	SqKm/Year
+	~		|
+
+Moving to Slum=
+	IF THEN ELSE(Available Area>1, DELAY3( (1-Influence of affordability on urban settlement level\
+		)*Immigration, 0.1
+	),
+	 0)
+	~	Persons/Year
+	~		|
+
+Base Green Area Reconversion rate=
+	0.005
+	~	Dmnl
+	~		|
+
+Base Non Economic Reconv rate=
+	0.01
+	~	Dmnl
+	~		|
+
+Conversion to Green Area=
+	IF THEN ELSE(Available Area>1, DELAY3(Base Green Area commisioned per year*Green Area\
+		, average green area construction period
+	 ), 0)
+	~	SqKm/Year
+	~		|
+
+Population Settled in Government Subsidized Housing= INTEG (
+	Births of Relocated People+Relocated-Deaths of Relocated People-Emmigration of Relocated People\
+		,
+		0)
+	~	Persons
+	~		|
+
+People Displaced from Slum=
+	IF THEN ELSE(Illegal Slum Population>0, IF THEN ELSE(Reconversion of Slums>0, ( Reconversion of Slums\
+		 / Slum dwelling area per person), 0), 0)
+	~	Persons/Year
+	~		|
+
+Available Relocation housing base 2010=
+	20000
+	~	Houses
+	~		|
+
+Relocation Rate=
+	0.005
+	~	Dmnl
+	~		|
+
+Conversion to Residential Land=
+	MAX( IF THEN ELSE(Available Area>0.5, MIN(DELAY3(Total additional Land demand +(Base residential conversion rate\
+		*Available Area),Available Area), Average Residential approval period
+	), 0), 0)
+	~	SqKm/Year
+	~		|
+
+housing scarcity ratio=
+	IF THEN ELSE(demand prediction-demand for housing construction>0, (demand prediction\
+		-demand for housing construction)/demand prediction, 0)
+	~	Dmnl
+	~	MIN( MAX(expected households of urban settlers / expected supply of \
+		houses, 0), 1)
+	|
+
+Base residential conversion rate=
+	0.02
+	~	Dmnl
+	~		|
+
+demand prediction= DELAY FIXED (
+	Immigration/BASE Average Household size, 1, Immigration/BASE Average Household size)
+	~	Houses
+	~		|
+
+additional housing demand=
+	IF THEN ELSE(demand prediction-demand for housing construction>0, demand for housing construction\
+		, 0)
+	~	
+	~		|
+
+Conversion to Non Residential Area=
+	IF THEN ELSE(Available Area>1, DELAY3( Base Economic area Conversion rate
+	*Urban Non Residential Area, Average Commercial Approval Period), 0)
+	~	SqKm/Year
+	~		|
+
+Houses Available= INTEG (
+	constructing+Selling-occupying,
+		Houses available at 2010)
+	~	Houses
+	~		|
+
+Houses available at 2010=
+	100000
+	~	
+	~		|
+
+Housing Affordability Rating=
+	median house price / median household income
+	~	Dmnl
+	~	Use Median Multiple concept: Median house price divided by Median \
+		household income. for categorization, refer to: \
+		http://dlx.b-ok.org/genesis/1482000/a9d42451da50988ddb54c5a1583441a6/_as/[M\
+		uharem_H._Karamujic_(auth.)]_Housing_Affordabili(b-ok.org).pdf TABLE 6.3, \
+		not demographia
+	|
+
+Floor Area Ratio=
+	5
+	~	Dmnl
+	~		|
+
+Selling=
+	(Emmigration of Settled People/BASE Average Household size)*Fraction of people selling houses when leaving city
+	~	Houses/Year
+	~		|
+
+Base Economic area Conversion rate=
+	0.02
+	~	Dmnl
+	~		|
+
+demand for housing construction=
+	(1-margin of empty housing)*Houses Available
+	~	
+	~		|
+
+margin of empty housing=
+	0.25
+	~	Dmnl
+	~		|
+
+Base Green Area commisioned per year=
+	0.02
+	~	Dmnl
+	~		|
+
+Base Slum reconversion rate=
+	0.02
+	~	Dmnl
+	~		|
+
+occupying=
+	IF THEN ELSE(Houses Available>1, MIN(((Buying Houses+Renting Houses)/BASE Average Household size\
+		),Houses Available), 0)
+	~	Houses/Year
+	~		|
+
+Buying Houses=
+	IF THEN ELSE(Houses Available>1, MIN(Immigration*(1-Ratio of Renting to Buying)*Influence of affordability on urban settlement level\
+		, Houses Available*BASE Average Household size), 0)
+	~	Persons/Year
+	~	DELAY3( People Entering City*(1-Ratio of Renting to Buying)*Influence of \
+		affordability on urban settlement level, 1)
+	|
+
+Births of Illegal Slum People=
+	IF THEN ELSE (Illegal Slum Population > 0, Average Fertility Rate * Illegal Slum Population\
+		, 0)
+	~	Persons/Year
+	~		|
+
+People with No Settlements= INTEG (
+	"Births of No-Settlement People"+"Death of No-Settlement People"+"Emmigration of No-Settlement People"\
+		+People Directly Go to Streets+People Displaced from Slum-Relocated,
+		0)
+	~	Persons
+	~	buffer between the relocation state and the state of finding a place
+	|
+
+Births of Relocated People=
+	Average Fertility Rate * Population Settled in Government Subsidized Housing
+	~	Persons/Year
+	~		|
+
+Births of Urban Population People=
+	Average Fertility Rate*Urban Population buying houses
+	~	Persons/Year
+	~		|
+
+Total Populations=
+	Illegal Slum Population + People with No Settlements + Urban Population buying houses\
+		 + Population Settled in Government Subsidized Housing + Urban Population Renting Houses
+	~	Persons
+	~		|
+
+Fraction of population living illegally=
+	(Illegal Slum Population+People with No Settlements)/Total Populations
+	~	
+	~		|
+
+Ratio of Renting to Buying=
+	0.48
+	~	Dmnl
+	~	renting rate in Jakarta on avaerage - \
+		http://www.republika.co.id/berita/koran/urbana/17/01/03/oj6tw2-48-juta-pend\
+		uduk-jakarta-tak-punya-rumah
+	|
+
+People Directly Go to Streets=
+	IF THEN ELSE(Available Area>1, 0, IF THEN ELSE(Moving to Slum > 1, 0, (1-Influence of affordability on urban settlement level\
+		)*Immigration))
+	~	Persons/Year
+	~	IF THEN ELSE(Slum Area>0, 0, DELAY3( (1-Percentage of people affected by \
+		affordability)*People Entering City, 0.1))
+	|
+
+People Entering City= INTEG (
+	Immigration-Buying Houses-Moving to Slum-People Directly Go to Streets-Renting Houses\
+		,
+		0)
+	~	Persons
+	~		|
+
+Urban Population Renting Houses= INTEG (
+	Renting Houses,
+		Initial Urban Population in 2010*Ratio of Renting to Buying)
+	~	Persons
+	~		|
+
+Urban Population buying houses= INTEG (
+	Births of Urban Population People+Buying Houses-Death of Urban Population-Emmigration of Settled People\
+		,
+		Initial Urban Population in 2010*(1-Ratio of Renting to Buying))
+	~	Persons
+	~		|
+
+Death of Illegal Slum People=
+	IF THEN ELSE (Illegal Slum Population > 0, Average Mortality Rate * Illegal Slum Population\
+		, 0)
+	~	Persons/Year
+	~		|
+
+Total Area available for development=
+	Available Area+Slum Area+Urban Non Residential Area+Urban Residential Land+Green Area
+	~	SqKm
+	~		|
+
+Total Land Available for Residential development=
+	Available Area
+	~	SqKm
+	~	Available Area+Urban Non Residential Area-Limit to Non Residential Land
+	|
+
+Emmigration of Illegal Slum People=
+	IF THEN ELSE (Illegal Slum Population > 0, average Emmigration percent*Illegal Slum Population
+	, 0)
+	~	Persons/Year
+	~		|
+
+Emmigration of Settled People=
+	average Emmigration percent*Urban Population buying houses
+	~	Persons/Year
+	~		|
+
+average green area construction period=
+	1
+	~	Year
+	~		|
+
+Available Area= INTEG (
+	reconversion of green area+Reconversion of Slums-Conversion to Non Residential Area-\
+		Conversion to Green Area-Conversion to Residential Land-Conversion to Slums,
+		33)
+	~	SqKm
+	~		|
+
+average green area demolition period=
+	0.1
+	~	Year
+	~		|
+
+Green Area= INTEG (
+	Conversion to Green Area-reconversion of green area,
+		5)
+	~	SqKm
+	~		|
+
+Immigration=
+	average Immigration percent * Total Populations
+	~	Persons/Year
+	~		|
+
+Influence of affordability on urban settlement level= WITH LOOKUP (
+	Housing Affordability Rating,
+		([(0,0)-(25,1)],(0,1),(2.81346,0.982456),(5.13761,0.973684),(7.82875,0.95614),(9.23547\
+		,0.921053),(10.581,0.855263),(11.6208,0.714912),(12.4771,0.561404),(14.0673,0.381579\
+		),(15.2141,0.333333),(16.9725,0.254386),(18.5015,0.210526),(20.107,0.162281),(22.3242\
+		,0.118421),(25,0.0833333) ))
+	~	Dmnl
+	~	([(0,0.3)-(15,1)],(0,1),(2.81346,0.982456),(4.40367,0.975439),(5.50459,0.963158),(6.3\
+		7615,0.953947),(7.47706,0.932456),(8.53211,0.895614),(9.54128,0.864912),(10\
+		.8716,0.803509),(12.0642,0.705263),(13.0275,0.567105),(14.1743,0.435088),(1\
+		5,0.3) )
+		
+		([(0,0)-(12,1)],(0,1),(2.81346,0.982456),(4.49541,0.967105),(5.90214,0.938596),(7.003\
+		06,0.907895),(7.88991,0.881579),(8.29358,0.846491),(8.99083,0.794298),(9.54\
+		128,0.723684),(10.1284,0.662281),(10.789,0.513158),(11.633,0.29386),(12,0.1\
+		) )
+		
+		([(0,0.3)-(12,1)],(0,1),(2.81346,0.982456),(4.49541,0.967105),(5.90214,0.93\
+		8596),(7.00306,0.907895),(7.88991,0.871053),(8.51376,0.82807),(8.99083,0.79\
+		4298),(9.43119,0.742105),(10.1284,0.662281),(10.8991,0.551754),(11.5229,0.4\
+		22807),(12,0.3) )
+	|
+
+median household income=
+	median annual salary 2010  * cumulative effect of inflation
+	~	euro
+	~	in aggregated level it is assumed that urban salary represents household \
+		income. Government incentives such as social security is not included
+	|
+
+"Emmigration of No-Settlement People"=
+	IF THEN ELSE(People with No Settlements >0, average Emmigration percent * People with No Settlements\
+		, 0)
+	~	Persons/Year
+	~		|
+
+Emmigration of Relocated People=
+	average Emmigration percent * Population Settled in Government Subsidized Housing
+	~	
+	~		|
+
+median house price in 2010=
+	20000
+	~	
+	~	Housing Affordability Rating average in 2010 in Jakarta is between 3 and \
+		3.6, for various housing classes. Initial value of median house price is \
+		therefore deducted from this rating backwards, taking into account median \
+		urban salary.
+	|
+
+median annual salary 2010=
+	3700
+	~	
+	~		|
+
+increase of housing price=
+	
+	IF THEN ELSE(Delayed effect of housing scarcity ratio on housing price<1, effect of spending capacity to afford house on housing price\
+		  * Delayed effect of inflation on housing price , 
+	
+	effect of spending capacity to afford house on housing price * Delayed effect of housing scarcity ratio on housing price\
+		 * Delayed effect of inflation on housing price )
+	~	dollar/Year
+	~	influenced by macroeconomic indicator (inflation), loan effect, and \
+		scarcity effect
+	|
+
+median house price= INTEG (
+	increase of housing price,
+		median house price in 2010)
+	~	dollar
+	~	Housing Affordability Rating average in 2010 in Jakarta is around 3.3 - 4, \
+		for various housing classes. Initial value of median house price is \
+		therefore deducted from this rating backwards, taking into account median \
+		urban salary.
+	|
+
+Responsiveness to urban housing gap=
+	0.5
+	~	
+	~		|
+
+Delayed effect of housing scarcity ratio on housing price=
+	smooth3(housing scarcity ratio,1)
+	~	
+	~	smooth3(housing scarcity ratio,1)
+	|
+
+effect of spending capacity to afford house on housing price=
+	smooth3( Average Spending Capacity for houses , time delay effect uncertainty of spending capacity on housing price\
+		 )
+	~	
+	~	3 years
+	|
+
+time delay effect uncertainty of spending capacity on housing price=
+	3
+	~	
+	~		|
+
+Delayed effect of inflation on housing price=
+	smooth3(cumulative effect of inflation, 1)
+	~	
+	~		|
+
+cumulative effect of inflation= INTEG (
+	rate of inflation effect,
+		1)
+	~	
+	~		|
+
+Urban Non Residential Area= INTEG (
+	Conversion to Non Residential Area-Reconversion Flow from Urban Non Residential to Residential Area\
+		,
+		95)
+	~	SqKm
+	~		|
+
+Illegal Slum Population= INTEG (
+	Births of Illegal Slum People+Moving to Slum-Death of Illegal Slum People-Emmigration of Illegal Slum People\
+		-People Displaced from Slum,
+		600000)
+	~	Persons
+	~	Births of Illegal Slum People+Moving to Slum-Death of Illegal Slum \
+		People-Emmigration of Illegal Slum People-People Displaced from Slum
+	|
+
+Urban Residential Land= INTEG (
+	Conversion to Residential Land+Reconversion Flow from Urban Non Residential to Residential Area\
+		,
+		519)
+	~	SqKm
+	~		|
+
+Slum conversion demand=
+	Moving to Slum*Slum dwelling area per person
+	~	SqKm/Year
+	~		|
+
+Deaths of Relocated People=
+	Average Mortality Rate * Population Settled in Government Subsidized Housing
+	~	Persons/Year
+	~		|
+
+average payment to income ratio for housing=
+	0.3
+	~	
+	~	payments for housing a median income household
+		could afford at a payment to income ratio of 30 percent of income \
+		http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.505.5973&rep=rep1&\
+		type=pdf
+	|
+
+Available labor supply based on working age population=
+	Total Populations*Fraction of Working Age population
+	~	Persons
+	~		|
+
+"Death of No-Settlement People"=
+	IF THEN ELSE(People with No Settlements > 0, Average Mortality Rate*People with No Settlements\
+		 ,0)
+	~	Persons/Year
+	~		|
+
+Death of Urban Population=
+	Average Mortality Rate*Urban Population buying houses
+	~	Persons/Year
+	~		|
+
+Initial Urban Population in 2010=
+	9e+006
+	~	Persons
+	~		|
+
+average Emmigration percent=
+	0.0143
+	~	Dmnl
+	~		|
+
+Average Fertility Rate=
+	0.0205
+	~	Dmnl
+	~		|
+
+Average Mortality Rate=
+	0.0014
+	~	Dmnl
+	~		|
+
+Fraction of people selling houses when leaving city=
+	0.3
+	~	Dmnl
+	~		|
+
+"Births of No-Settlement People"=
+	IF THEN ELSE(People with No Settlements >0,Average Fertility Rate*People with No Settlements\
+		,0)
+	~	
+	~		|
+
+average Immigration percent=
+	0.0101
+	~	
+	~		|
+
+Fraction of Working Age population=
+	0.55
+	~	
+	~		|
+
+Slum dwelling area per person=
+	4.71e-005
+	~	SqKm/Person
+	~		|
+
+house construction time=
+	1.5
+	~	years
+	~		|
+
+uncertainty of average percent of inflation effect=
+	0.03
+	~	Dmnl
+	~	assumption based on average inflation rate over 2010-2015
+	|
+
+Average Commercial Approval Period=
+	2
+	~	Year
+	~		|
+
+Average slum Demolition Period=
+	1.5
+	~	Year
+	~		|
+
+BASE Average Household size=
+	4
+	~	Persons/House
+	~		|
+
+Average Residential approval period=
+	1
+	~	Year
+	~		|
+
+Average Slum Construction period=
+	0.08
+	~	Year
+	~		|
+
+Housing area per household=
+	BASE Average Household size*Housing Area Per person
+	~	SqKm/House
+	~		|
+
+Housing Area Per person=
+	5e-005
+	~	SqKm/Person
+	~	aggregated, taking into account other complex such as roads across the \
+		housing areas.
+	|
+
+Slum Area= INTEG (
+	Conversion to Slums-Reconversion of Slums,
+		25)
+	~	SqKm
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 2050
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 2010
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.015625
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*land
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,90,0
+10,1,Urban Residential Land,775,358,117,24,3,131,0,0,0,0,0,0
+10,2,Urban Non Residential Area,1215,585,58,32,3,131,0,0,0,0,0,0
+10,3,Available Area,766,593,119,49,3,131,0,0,0,0,0,0
+10,4,Slum Area,773,909,120,21,3,131,0,0,0,0,0,0
+1,5,7,1,4,0,0,22,0,0,0,-1--1--1,,1|(744,411)|
+1,6,7,3,100,0,0,22,0,0,0,-1--1--1,,1|(744,498)|
+11,7,908,744,447,8,6,33,3,0,0,4,0,0,0
+10,8,Conversion to Residential Land,805,447,53,19,40,131,0,0,-1,0,0,0
+1,9,11,2,4,0,0,22,0,0,0,-1--1--1,,1|(1099,593)|
+1,10,11,3,100,0,0,22,0,0,0,-1--1--1,,1|(957,593)|
+11,11,524,1036,593,6,8,34,3,0,0,3,0,0,0
+10,12,Conversion to Non Residential Area,1036,568,75,17,40,131,0,0,-1,0,0,0
+1,13,15,4,4,0,0,22,0,0,0,-1--1--1,,1|(677,846)|
+1,14,15,3,100,0,0,22,0,0,0,-1--1--1,,1|(677,717)|
+11,15,1644,677,799,8,6,33,3,0,0,2,0,0,0
+10,16,Conversion to Slums,624,799,45,19,40,3,0,0,-1,0,0,0
+10,17,Average slum Demolition Period,1156,820,58,19,8,131,1,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+10,18,Total Area available for development,675,1003,64,19,8,3,3,0,0,0,0,0
+1,19,4,18,1,3,0,0,0,128,0,-1--1--1,,1|(671,955)|
+10,20,Available Area,851,993,56,11,8,2,3,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,21,Urban Residential Land,437,1018,61,19,8,2,3,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,22,20,18,1,3,0,0,0,128,0,-1--1--1,,1|(754,970)|
+1,23,21,18,1,3,0,0,0,128,0,-1--1--1,,1|(566,1050)|
+1,24,26,3,4,0,0,22,0,0,0,-1--1--1,,1|(863,715)|
+1,25,26,4,100,0,0,22,0,0,0,-1--1--1,,1|(863,844)|
+11,26,2108,863,795,8,6,33,3,0,0,2,0,0,0
+10,27,Reconversion of Slums,803,795,52,19,40,3,0,0,-1,0,0,0
+10,28,Average Residential approval period,422,358,64,19,8,131,2,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+10,29,Total Land Available for Residential development,950,1063,78,19,8,3,3,0,0,0,0,0
+10,30,BASE Average Household size,672,87,50,19,8,131,4,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+10,31,Housing Area Per person,440,93,57,19,8,3,4,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+10,32,Housing area per household,559,152,71,22,8,131,4,0,0,0,0,0
+1,33,30,32,1,4,0,0,0,128,0,-1--1--1,,1|(631,121)|
+1,34,31,32,1,4,0,0,0,128,0,-1--1--1,,1|(464,131)|
+10,35,Total additional Land demand,586,296,49,19,8,3,4,0,0,0,0,0
+1,36,32,35,1,4,0,0,0,128,0,-1--1--1,,1|(602,238)|
+10,37,Green Area,304,579,70,50,3,131,0,0,0,0,0,0
+1,38,40,37,4,0,0,22,0,0,0,-1--1--1,,1|(442,554)|
+1,39,40,3,100,0,0,22,0,0,0,-1--1--1,,1|(584,554)|
+11,40,828,516,554,6,8,34,3,0,0,1,0,0,0
+10,41,Conversion to Green Area,516,581,45,19,40,3,0,0,-1,0,0,0
+1,42,37,18,1,3,0,0,0,128,0,-1--1--1,,1|(378,916)|
+1,43,3,11,1,1,0,0,0,128,0,-1--1--1,,1|(1001,629)|
+1,44,3,15,1,1,0,0,0,128,0,-1--1--1,,1|(739,728)|
+10,45,Urban Non Residential Area,770,1067,57,19,8,2,3,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,46,45,18,1,3,0,0,0,128,0,-1--1--1,,1|(698,1054)|
+1,47,28,7,1,2,0,0,0,64,0,-1--1--1,,1|(579,452)|
+1,48,17,26,1,1,0,0,0,128,0,-1--1--1,,1|(991,798)|
+1,49,35,7,1,4,0,0,0,128,0,-1--1--1,,1|(627,378)|
+1,50,4,27,1,1,0,0,0,128,0,-1--1--1,,1|(769,846)|
+10,51,Total additional Land demand,1422,989,54,19,8,2,2,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,52,20,29,1,3,0,0,0,128,0,-1--1--1,,1|(924,1020)|
+10,53,Average Commercial Approval Period,1049,500,68,19,8,3,1,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+1,54,53,12,1,1,0,0,0,64,0,-1--1--1,,1|(1031,522)|
+1,55,3,40,1,1,0,0,0,128,0,-1--1--1,,1|(581,506)|
+10,56,Average Slum Construction period,467,886,64,19,8,3,1,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+1,57,56,16,1,1,0,0,0,128,0,-1--1--1,,1|(544,900)|
+1,58,60,1,4,0,0,22,0,0,0,-1--1--1,,1|(1228,358)|
+1,59,60,2,100,0,0,22,0,0,0,-1--1--1,,1|(1228,482)|
+11,60,1388,1228,403,6,8,34,3,0,0,1,0,0,0
+10,61,Reconversion Flow from Urban Non Residential to Residential Area,1228,435,107,24,40,131,0,0,-1,0,0,0
+1,62,3,8,1,1,0,0,0,128,0,-1--1--1,,1|(828,487)|
+10,63,Slum conversion demand,582,939,57,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,64,63,16,1,0,0,0,0,64,0,-1--1--1,,1|(639,868)|
+10,65,Total additional Land demand,1263,261,54,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,66,Time,1356,1062,33,14,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,67,Time,152,236,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,68,Time,1425,761,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,69,average green area construction period,301,486,61,19,8,3,0,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+10,70,average green area demolition period,494,821,60,19,8,3,0,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+1,71,69,41,1,0,0,0,0,128,0,-1--1--1,,1|(356,498)|
+1,72,74,3,4,0,0,22,0,0,0,-1--1--1,,1|(581,614)|
+1,73,74,37,100,0,0,22,0,0,0,-1--1--1,,1|(439,614)|
+11,74,2172,510,614,6,8,34,3,0,0,1,0,0,0
+10,75,reconversion of green area,510,641,49,19,40,3,0,0,-1,0,0,0
+10,76,Total additional Land demand,601,740,54,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,77,Reconversion of Slums,1498,823,57,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,78,Time,822,34,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,79,Time,608,577,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,80,TIME STEP,985,24,50,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,81,reconversion of green area,1477,250,54,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,82,Reconversion of Slums,1544,347,57,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,83,People Displaced from Slum,1191,112,61,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,84,People Directly Go to Streets,974,124,66,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,85,People Displaced from Slum,893,278,61,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,86,Reconversion of Slums,324,415,57,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,87,Base Green Area commisioned per year,445,458,70,19,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-128
+1,88,87,41,0,0,0,0,0,64,0,-1--1--1,,1|(476,513)|
+10,89,Floor Area Ratio,414,204,54,19,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-128
+1,90,89,35,0,0,0,0,0,64,0,-1--1--1,,1|(493,246)|
+10,91,Base Slum reconversion rate,984,979,55,19,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-128
+1,92,91,27,0,0,0,0,0,64,0,-1--1--1,,1|(898,891)|
+1,93,37,41,1,0,0,0,0,128,0,-1--1--1,,1|(423,588)|
+10,94,Base Economic area Conversion rate,998,703,66,19,8,3,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-128
+1,95,94,12,0,0,0,0,0,64,0,-1--1--1,,1|(1015,641)|
+1,96,2,11,1,0,0,0,0,128,0,-1--1--1,,1|(1126,629)|
+10,97,additional housing demand,358,290,61,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,98,97,35,0,0,0,0,0,64,0,-1--1--1,,1|(471,292)|
+10,99,Base residential conversion rate,946,416,50,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,100,99,8,1,0,0,0,0,128,0,-1--1--1,,1|(916,440)|
+10,101,Base Green Area Reconversion rate,352,680,60,22,8,131,0,3,0,0,0,0,128-0-64,0-0-0,|12||128-0-64
+1,102,101,75,1,0,0,0,0,128,0,-1--1--1,,1|(454,687)|
+1,103,37,75,1,0,0,0,0,128,0,-1--1--1,,1|(389,655)|
+1,104,3,75,1,0,0,0,0,128,0,-1--1--1,,1|(608,661)|
+10,105,Base Non Economic Reconv rate,1410,482,66,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,106,105,61,1,0,0,0,0,128,0,-1--1--1,,1|(1305,477)|
+1,107,2,61,1,0,0,0,0,128,0,-1--1--1,,1|(1268,523)|
+1,108,3,61,1,0,0,0,0,128,0,-1--1--1,,1|(968,484)|
+1,109,35,61,1,0,0,0,0,128,0,-1--1--1,,1|(926,319)|
+1,110,35,75,1,0,0,0,0,128,0,-1--1--1,,1|(596,518)|
+10,111,Moving to Slum,482,763,59,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,112,111,16,1,0,0,0,0,128,0,-1--1--1,,1|(549,788)|
+10,113,Slum reconversion Rate,1001,852,58,19,8,3,0,0,0,0,0,0
+10,114,Policy reconversion of Slums Switch,1198,1025,69,19,8,3,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,115,effect of reconversion rate on Policy,1229,940,69,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,116,Slum reconv polict start year,1285,876,59,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+1,117,115,113,1,0,0,0,0,128,0,-1--1--1,,1|(1182,902)|
+1,118,91,113,1,0,0,0,0,128,0,-1--1--1,,1|(1022,911)|
+1,119,116,113,1,0,0,0,0,128,0,-1--1--1,,1|(1185,842)|
+1,120,68,113,1,0,0,0,0,128,0,-1--1--1,,1|(1304,756)|
+1,121,114,27,1,0,0,0,0,128,0,-1--1--1,,1|(1006,913)|
+1,122,113,27,1,0,0,0,0,128,0,-1--1--1,,1|(936,811)|
+10,123,Austerity Policy Program Switch,1521,618,61,19,8,2,0,19,-1,0,0,0,128-128-128,0-0-0,|12|B|0-255-0
+10,124,reconv policy start year,1534,429,43,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,125,Non economic Reconv rate,1393,551,47,19,8,3,0,0,0,0,0,0
+1,126,68,125,1,0,0,0,0,128,0,-1--1--1,,1|(1394,670)|
+1,127,124,125,1,0,0,0,0,128,0,-1--1--1,,1|(1509,474)|
+1,128,105,125,1,0,0,0,0,128,0,-1--1--1,,1|(1392,519)|
+1,129,125,61,1,0,0,0,0,128,0,-1--1--1,,1|(1318,538)|
+1,130,123,61,1,0,0,0,0,128,0,-1--1--1,,1|(1350,605)|
+10,131,Green reconv policy start,147,679,44,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,132,green reconv rate,209,752,55,11,8,3,0,0,0,0,0,0
+1,133,131,132,1,0,0,0,0,128,0,-1--1--1,,1|(174,717)|
+1,134,101,132,1,0,0,0,0,128,0,-1--1--1,,1|(326,707)|
+10,135,Accelerated city growth program switch,160,836,79,19,8,3,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,136,Time,82,796,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,137,136,132,0,0,0,0,0,64,0,-1--1--1,,1|(135,777)|
+10,138,effect on non resi reconv of policy,1562,556,55,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+1,139,138,125,1,0,0,0,0,128,0,-1--1--1,,1|(1492,560)|
+10,140,effect of green recov,282,898,46,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+1,141,140,132,1,0,0,0,0,128,0,-1--1--1,,1|(273,855)|
+1,142,135,75,1,0,0,0,0,128,0,-1--1--1,,1|(346,800)|
+1,143,132,75,1,0,0,0,0,128,0,-1--1--1,,1|(347,759)|
+10,144,Policy High rise Program switch,237,350,56,19,8,3,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,145,increase in FAR,168,207,51,11,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,146,FAR implementation year,281,78,66,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,147,New Floor Area Ratio,294,171,54,19,8,3,0,0,0,0,0,0
+1,148,67,147,1,0,0,0,0,128,0,-1--1--1,,1|(240,237)|
+1,149,145,147,1,0,0,0,0,128,0,-1--1--1,,1|(213,181)|
+1,150,146,147,1,0,0,0,0,128,0,-1--1--1,,1|(286,121)|
+1,151,89,147,1,0,0,0,0,128,0,-1--1--1,,1|(324,209)|
+1,152,147,35,1,0,0,0,0,128,0,-1--1--1,,1|(403,176)|
+1,153,144,35,1,0,0,0,0,128,0,-1--1--1,,1|(371,320)|
+10,154,additional housing demand for relocation,176,287,74,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,155,154,35,1,0,0,0,0,128,0,-1--1--1,,1|(307,249)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Housing
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,70,0
+10,1,house construction time,1332,329,54,19,8,3,1,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-128
+10,2,housing scarcity ratio,1475,808,50,19,8,3,3,0,0,0,0,0
+10,3,median annual salary 2010,290,539,82,28,8,131,3,0,0,0,0,0
+10,4,median household income,538,559,58,19,8,3,3,0,0,0,0,0
+1,5,3,4,1,3,0,0,0,128,0,-1--1--1,,1|(385,572)|
+10,6,median house price,1004,927,72,34,3,131,4,0,0,0,0,0
+12,7,48,698,927,10,8,0,3,4,0,-1,0,0,0
+1,8,10,6,4,4,0,22,0,0,0,-1--1--1,,1|(877,923)|
+1,9,10,7,100,4,0,22,0,0,0,-1--1--1,,1|(759,923)|
+11,10,48,817,923,6,8,34,131,4,0,1,0,0,0
+10,11,increase of housing price,817,954,61,23,40,131,4,0,-1,0,0,0
+10,12,BASE Average Household size,882,43,65,26,8,130,2,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,13,Average Spending Capacity for houses,818,615,114,20,8,131,4,0,0,0,0,0
+1,14,4,13,1,4,0,0,0,128,0,-1--1--1,,1|(656,613)|
+10,15,cumulative effect of inflation,646,672,68,32,3,131,2,0,0,0,0,0
+12,16,48,379,664,10,8,0,3,2,0,-1,0,0,0
+1,17,19,15,4,2,0,22,0,0,0,-1--1--1,,1|(535,668)|
+1,18,19,16,100,2,0,22,0,0,0,-1--1--1,,1|(435,668)|
+11,19,48,487,668,6,8,34,3,2,0,1,0,0,0
+10,20,rate of inflation effect,487,693,68,17,40,131,2,0,-1,0,0,0
+10,21,uncertainty of average percent of inflation effect,294,615,79,25,8,131,2,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,22,21,20,1,2,0,0,0,128,0,-1--1--1,,1|(437,642)|
+1,23,15,4,1,2,0,0,0,128,0,-1--1--1,,1|(575,622)|
+10,24,Emmigration of Settled People,1126,268,53,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,25,Fraction of people selling houses when leaving city,1143,113,82,22,8,131,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,26,15,19,1,0,0,0,0,128,0,-1--1--1,,1|(610,714)|
+10,27,BASE Average Household size,131,343,63,25,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,28,Housing Affordability Rating,740,1103,69,24,8,131,0,2,0,0,0,0,-1--1--1,0-0-0,|12||0-128-0
+10,29,median household income,564,1043,74,22,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,30,29,28,1,0,0,0,0,128,0,-1--1--1,,1|(592,1042)|
+10,31,average payment to income ratio for housing,1006,554,103,36,8,131,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,32,31,13,1,0,0,0,0,128,0,-1--1--1,,1|(926,560)|
+10,33,Time,1303,1158,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,34,effect of spending capacity to afford house on housing price,815,819,81,28,8,3,0,0,0,0,0,0
+1,35,13,34,1,0,0,0,0,128,0,-1--1--1,,1|(785,671)|
+1,36,34,11,1,0,0,0,0,128,0,-1--1--1,,1|(801,865)|
+10,37,Delayed effect of inflation on housing price,636,810,78,19,8,3,0,0,0,0,0,0
+1,38,37,11,1,0,0,0,0,128,0,-1--1--1,,1|(671,887)|
+1,39,15,37,1,0,0,0,0,128,0,-1--1--1,,1|(622,740)|
+10,40,Delayed effect of housing scarcity ratio on housing price,1177,733,80,28,8,3,0,0,0,0,0,0
+1,41,40,11,1,0,0,0,0,128,0,-1--1--1,,1|(993,809)|
+10,42,time delay effect uncertainty of spending capacity on housing price,909,708,97,34,8,131,0,2,-1,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,43,42,34,1,0,0,0,0,64,0,-1--1--1,,1|(846,735)|
+10,44,Time,148,404,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,45,2,40,1,0,0,0,0,128,0,-1--1--1,,1|(1364,836)|
+10,46,Buying Houses,712,557,31,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,47,median house price in 2010,1022,866,61,19,8,3,0,0,-1,0,0,0
+1,48,47,6,1,0,0,0,0,128,1,-1--1--1,,1|(1009,882)|
+10,49,Time,772,178,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,50,Housing area per household,274,290,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,51,Reconversion Flow from Urban Non Residential to Residential Area,659,224,83,28,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,52,Conversion to Residential Land,1594,122,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,53,Total additional Land demand,526,273,54,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,54,Renting Houses,840,413,58,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,55,6,28,1,0,0,0,0,128,0,-1--1--1,,1|(918,1032)|
+10,56,Houses Available,1792,401,74,36,3,131,0,0,0,0,0,0
+12,57,48,1473,391,10,8,0,3,0,0,-1,0,0,0
+1,58,60,56,4,0,0,22,0,0,0,-1--1--1,,1|(1663,391)|
+1,59,60,57,100,0,0,22,0,0,0,-1--1--1,,1|(1540,391)|
+11,60,48,1603,391,6,8,34,3,0,0,1,0,0,0
+10,61,constructing,1603,410,38,11,40,3,0,0,-1,0,0,0
+12,62,48,2153,399,10,8,0,3,0,0,-1,0,0,0
+1,63,65,62,4,0,0,22,0,0,0,-1--1--1,,1|(2076,399)|
+1,64,65,56,100,0,0,22,0,0,0,-1--1--1,,1|(1932,399)|
+11,65,48,2004,399,6,8,34,3,0,0,1,0,0,0
+10,66,occupying,2004,418,33,11,40,3,0,0,-1,0,0,0
+12,67,48,1789,177,10,8,0,3,0,0,-1,0,0,0
+1,68,70,56,4,0,0,22,0,0,0,-1--1--1,,1|(1789,323)|
+1,69,70,67,100,0,0,22,0,0,0,-1--1--1,,1|(1789,227)|
+11,70,48,1789,275,8,6,33,3,0,0,4,0,0,0
+10,71,Selling,1819,275,22,11,40,3,0,0,-1,0,0,0
+10,72,BASE Average Household size,1948,506,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,73,Immigration,1906,733,47,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,74,Buying Houses,2021,301,56,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,75,Renting Houses,2088,516,58,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,76,74,65,1,0,0,0,0,128,0,-1--1--1,,1|(1996,331)|
+1,77,75,66,1,0,0,0,0,128,0,-1--1--1,,1|(2050,469)|
+1,78,72,66,1,0,0,0,0,128,0,-1--1--1,,1|(1970,457)|
+10,79,Houses available at 2010,1792,456,54,19,8,3,0,0,-1,0,0,0
+1,80,79,56,0,0,0,0,0,64,1,-1--1--1,,1|(1792,437)|
+1,81,25,71,1,0,0,0,0,128,0,-1--1--1,,1|(1504,151)|
+1,82,24,71,1,0,0,0,0,128,0,-1--1--1,,1|(1476,229)|
+1,83,72,71,1,0,0,0,0,128,0,-1--1--1,,1|(1904,373)|
+1,84,56,66,1,0,0,0,0,128,0,-1--1--1,,1|(1870,446)|
+10,85,margin of empty housing,1654,762,68,19,8,3,0,0,0,0,0,0
+10,86,demand for housing construction,1708,676,62,19,8,3,0,0,0,0,0,0
+1,87,56,86,1,0,0,0,0,128,0,-1--1--1,,1|(1709,536)|
+1,88,85,86,1,0,0,0,0,128,0,-1--1--1,,1|(1695,716)|
+10,89,demand prediction,2084,681,43,19,8,3,0,0,0,0,0,0
+10,90,TIME STEP,2192,803,50,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,91,additional housing demand,1846,565,57,19,8,3,0,0,0,0,0,0
+1,92,86,91,1,0,0,0,0,128,0,-1--1--1,,1|(1771,619)|
+1,93,89,91,1,0,0,0,0,128,0,-1--1--1,,1|(1947,634)|
+1,94,91,61,1,0,0,0,0,128,0,-1--1--1,,1|(1712,450)|
+1,95,1,60,1,0,0,0,0,128,0,-1--1--1,,1|(1469,326)|
+1,96,52,60,1,0,0,0,0,128,0,-1--1--1,,1|(1575,272)|
+10,97,Housing area per household,1327,394,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,98,97,61,1,0,0,0,0,128,0,-1--1--1,,1|(1448,431)|
+1,99,89,2,1,0,0,0,0,128,0,-1--1--1,,1|(1761,808)|
+1,100,86,2,1,0,0,0,0,128,0,-1--1--1,,1|(1567,699)|
+1,101,73,89,1,0,0,0,0,128,0,-1--1--1,,1|(1949,695)|
+1,102,72,89,1,0,0,0,0,128,0,-1--1--1,,1|(1995,612)|
+10,103,Housing Finance Policy Program Switch,1361,585,69,39,8,131,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,104,Housing Finane Policy start year,1036,329,52,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,105,Housing finance effect on household spendings,1345,487,80,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,106,Time,1147,372,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,107,New Payement to Income ratio,946,454,58,19,8,3,0,0,0,0,0,0
+1,108,31,107,1,0,0,0,0,128,0,-1--1--1,,1|(954,501)|
+1,109,105,107,1,0,0,0,0,128,0,-1--1--1,,1|(1158,484)|
+1,110,107,13,1,0,0,0,0,128,0,-1--1--1,,1|(800,550)|
+1,111,103,13,1,0,0,0,0,128,0,-1--1--1,,1|(1118,597)|
+10,112,Austerity Policy Program Switch,454,861,58,25,8,131,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,113,Auterity implementation year,162,766,64,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,114,Time,238,710,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,115,Updated uncertainty of inflation,410,762,65,19,8,3,0,0,0,0,0,0
+1,116,21,115,1,0,0,0,0,128,0,-1--1--1,,1|(333,697)|
+10,117,Austerity effect on inflation,255,848,58,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+1,118,117,115,1,0,0,0,0,128,0,-1--1--1,,1|(350,816)|
+1,119,104,107,1,0,0,0,0,128,0,-1--1--1,,1|(941,416)|
+1,120,106,107,1,0,0,0,0,128,0,-1--1--1,,1|(1048,381)|
+1,121,113,115,1,0,0,0,0,128,0,-1--1--1,,1|(276,793)|
+1,122,114,115,1,0,0,0,0,128,0,-1--1--1,,1|(292,729)|
+1,123,112,20,1,0,0,0,0,128,0,-1--1--1,,1|(501,804)|
+1,124,115,20,1,0,0,0,0,128,0,-1--1--1,,1|(453,720)|
+10,125,additional housing demand for relocation,1562,574,74,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,126,125,61,1,0,0,0,0,128,0,-1--1--1,,1|(1601,483)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Population
+$192-192-192,0,Times New Roman|12||0-0-0|0-0-0|0-0-255|-1--1--1|-1--1--1|96,96,100,0
+10,1,People Entering City,241,778,118,67,3,131,0,0,0,0,0,0
+12,2,48,-52,753,10,8,0,3,0,0,-1,0,0,0
+1,3,5,1,4,0,0,22,0,0,0,-1--1--1,,1|(86,755)|
+1,4,5,2,100,0,0,22,0,0,0,-1--1--1,,1|(-2,755)|
+11,5,48,43,755,6,8,34,3,0,0,1,0,0,0
+10,6,Immigration,43,774,38,11,40,3,0,0,-1,0,0,0
+10,7,Illegal Slum Population,331,382,115,52,3,131,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-64-0
+10,8,People with No Settlements,775,371,125,52,3,131,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-64-0
+10,9,Urban Population buying houses,897,759,142,66,3,131,0,0,0,0,0,0
+1,10,12,9,4,0,0,22,0,0,0,-1--1--1,,1|(664,749)|
+1,11,12,1,100,0,0,22,0,0,0,-1--1--1,,1|(460,749)|
+11,12,1948,567,749,6,8,34,3,0,0,1,0,0,0
+10,13,Buying Houses,567,768,47,11,40,3,0,0,-1,0,0,0
+1,14,16,7,4,0,0,22,0,0,0,-1--1--1,,1|(280,493)|
+1,15,16,1,100,0,0,22,0,0,0,-1--1--1,,1|(280,637)|
+11,16,1820,280,558,8,6,33,3,0,0,4,0,0,0
+10,17,Moving to Slum,338,558,50,11,40,3,0,0,-1,0,0,0
+1,18,20,8,4,0,0,22,0,0,0,-1--1--1,,1|(606,377)|
+1,19,20,7,100,0,0,22,0,0,0,-1--1--1,,1|(498,377)|
+11,20,1356,556,377,6,8,34,3,0,0,1,0,0,0
+10,21,People Displaced from Slum,556,404,56,19,40,3,0,0,-1,0,0,0
+12,22,48,1324,766,10,8,0,3,0,0,-1,0,0,0
+1,23,25,22,4,0,0,22,0,0,0,-1--1--1,,1|(1248,766)|
+1,24,25,9,100,0,0,22,0,0,0,-1--1--1,,1|(1104,766)|
+11,25,48,1176,766,6,8,34,3,0,0,1,0,0,0
+10,26,Emmigration of Settled People,1176,785,48,19,40,3,0,0,-1,0,0,0
+12,27,48,376,141,10,8,0,3,0,0,-1,0,0,0
+1,28,29,27,4,0,0,22,0,0,0,-1--1--1,,1|(384,191)|
+11,29,48,384,240,8,6,33,3,0,0,4,0,0,0
+10,30,Emmigration of Illegal Slum People,461,240,69,19,40,3,0,0,-1,0,0,0
+12,31,48,18,373,10,8,0,3,0,0,-1,0,0,0
+1,32,33,31,4,0,0,22,0,0,0,-1--1--1,,1|(72,373)|
+11,33,48,122,373,6,8,34,3,0,0,1,0,0,0
+10,34,Death of Illegal Slum People,122,400,48,19,40,3,0,0,-1,0,0,0
+12,35,48,1210,379,10,8,0,3,0,0,-1,0,0,0
+1,36,38,35,4,0,0,22,0,0,0,-1--1--1,,1|(1161,379)|
+1,37,38,8,100,0,0,22,0,0,0,-1--1--1,,1|(1005,379)|
+11,38,48,1116,379,6,8,34,3,0,0,1,0,0,0
+10,39,"Death of No-Settlement People",1116,406,71,19,40,3,0,0,-1,0,0,0
+12,40,48,942,965,10,8,0,3,0,0,-1,0,0,0
+1,41,43,40,4,0,0,22,0,0,0,-1--1--1,,1|(940,925)|
+1,42,43,9,100,0,0,22,0,0,0,-1--1--1,,1|(940,853)|
+11,43,48,940,887,8,6,33,3,0,0,4,0,0,0
+10,44,Death of Urban Population,998,887,50,19,40,3,0,0,-1,0,0,0
+10,45,average Immigration percent,-30,677,54,31,8,131,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+10,46,Influence of affordability on urban settlement level,646,832,76,28,8,131,0,0,0,0,0,0
+10,47,Slum dwelling area per person,475,538,60,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+10,48,Average Fertility Rate,676,138,53,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+12,49,48,660,175,10,8,0,3,0,0,-1,0,0,0
+1,50,52,8,4,0,0,22,0,0,0,-1--1--1,,1|(662,286)|
+1,51,52,49,100,0,0,22,0,0,0,-1--1--1,,1|(662,212)|
+11,52,48,662,247,8,6,33,3,0,0,4,0,0,0
+10,53,"Births of No-Settlement People",741,247,71,19,40,3,0,0,-1,0,0,0
+12,54,48,236,149,10,8,0,3,0,0,-1,0,0,0
+1,55,56,54,100,0,0,22,0,0,0,-1--1--1,,1|(236,196)|
+11,56,48,236,242,8,6,33,3,0,0,4,0,0,0
+10,57,Births of Illegal Slum People,292,242,48,19,40,3,0,0,-1,0,0,0
+12,58,48,766,953,10,8,0,3,0,0,-1,0,0,0
+1,59,61,9,4,0,0,22,0,0,0,-1--1--1,,1|(768,860)|
+1,60,61,58,100,0,0,22,0,0,0,-1--1--1,,1|(768,926)|
+11,61,48,768,901,8,6,33,3,0,0,4,0,0,0
+10,62,Births of Urban Population People,834,901,58,19,40,3,0,0,-1,0,0,0
+1,63,48,53,1,0,0,0,0,128,0,-1--1--1,,1|(697,201)|
+10,64,Average Fertility Rate,70,199,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,65,Average Fertility Rate,832,996,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,66,65,62,1,0,0,0,0,128,0,-1--1--1,,1|(828,962)|
+1,67,69,8,4,0,0,22,0,0,0,-1--1--1,,3|(740,645)|(740,645)|(740,534)|
+1,68,69,1,100,0,0,22,0,0,0,-1--1--1,,1|(241,645)|
+11,69,1852,535,645,6,8,34,3,0,0,1,0,0,0
+10,70,People Directly Go to Streets,535,672,61,19,40,3,0,0,-1,0,0,0
+12,71,48,882,554,10,8,0,3,0,0,-1,0,0,0
+1,72,74,71,4,0,0,22,0,0,0,-1--1--1,,1|(879,528)|
+1,73,74,8,100,0,0,22,0,0,0,-1--1--1,,1|(879,461)|
+11,74,48,879,505,8,6,33,3,0,0,4,0,0,0
+10,75,"Emmigration of No-Settlement People",958,505,71,19,40,3,0,0,-1,0,0,0
+10,76,Average Mortality Rate,1228,465,46,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,77,76,39,1,0,0,0,0,128,0,-1--1--1,,1|(1177,466)|
+1,78,64,57,1,0,0,0,0,128,0,-1--1--1,,1|(156,241)|
+10,79,Average Mortality Rate,1168,959,51,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,80,79,44,1,0,0,0,0,128,0,-1--1--1,,1|(1056,975)|
+10,81,Average Mortality Rate,52,521,51,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,82,81,34,1,0,0,0,0,128,0,-1--1--1,,1|(124,468)|
+10,83,Available Area,693,691,56,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,84,83,70,1,0,0,0,0,64,0,-1--1--1,,1|(589,709)|
+10,85,Available Area,440,616,56,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,86,85,17,1,0,0,0,0,64,0,-1--1--1,,1|(409,623)|
+10,87,Reconversion of Slums,560,306,57,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,88,87,21,1,0,0,0,0,64,0,-1--1--1,,1|(521,343)|
+10,89,Slum conversion demand,384,475,53,19,8,3,0,0,0,0,0,0
+1,90,17,89,1,0,0,0,0,128,0,-1--1--1,,1|(326,509)|
+1,91,47,89,1,0,0,0,0,128,0,-1--1--1,,1|(414,509)|
+10,92,Total Populations,-282,181,55,11,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||0-128-0
+10,93,Illegal Slum Population,-90,209,42,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||0-128-0
+10,94,People with No Settlements,-174,285,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||0-128-0
+10,95,Urban Population buying houses,-295,333,61,19,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||0-128-0
+1,96,93,92,1,0,0,0,0,128,0,-1--1--1,,1|(-142,155)|
+1,97,94,92,1,0,0,0,0,128,0,-1--1--1,,1|(-254,239)|
+1,98,95,92,1,0,0,0,0,128,0,-1--1--1,,1|(-333,244)|
+10,99,Total Populations,-18,837,42,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,100,99,6,1,0,0,0,0,128,0,-1--1--1,,1|(52,817)|
+1,101,7,57,1,0,0,0,0,128,0,-1--1--1,,1|(332,292)|
+1,102,9,44,1,0,0,0,0,128,0,-1--1--1,,1|(1022,855)|
+1,103,9,62,1,0,0,0,0,128,0,-1--1--1,,1|(872,867)|
+1,104,8,39,1,0,0,0,0,128,0,-1--1--1,,1|(1026,414)|
+1,105,8,53,1,0,0,0,0,128,0,-1--1--1,,1|(782,282)|
+10,106,average Emmigration percent,449,75,76,24,8,131,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,107,106,30,1,0,0,0,0,128,0,-1--1--1,,1|(405,161)|
+10,108,average Emmigration percent,1138,510,66,31,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,109,108,75,1,0,0,0,0,128,0,-1--1--1,,1|(1022,472)|
+1,110,8,75,1,0,0,0,0,128,0,-1--1--1,,1|(907,430)|
+1,111,9,26,1,0,0,0,0,128,0,-1--1--1,,1|(1105,729)|
+10,112,Initial Urban Population in 2010,1105,837,69,25,8,131,0,0,0,0,0,0
+1,113,7,34,1,0,0,0,0,128,0,-1--1--1,,1|(179,336)|
+10,114,Influence of affordability on urban settlement level,161,608,59,43,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,115,114,17,1,0,0,0,0,128,0,-1--1--1,,1|(222,600)|
+10,116,Influence of affordability on urban settlement level,633,563,67,34,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,117,116,70,1,0,0,0,0,128,0,-1--1--1,,1|(547,607)|
+1,118,119,8,100,0,0,22,0,0,0,-1--1--1,,1|(863,287)|
+11,119,1308,863,249,8,6,33,3,0,0,4,0,0,0
+10,120,Relocated,945,249,74,19,40,3,0,0,-1,0,0,0
+10,121,Population Settled in Government Subsidized Housing,858,102,110,38,3,131,0,0,0,0,0,0
+1,122,119,121,4,0,0,22,0,0,0,-1--1--1,,1|(863,191)|
+12,123,48,931,-29,10,8,0,3,0,0,-1,0,0,0
+1,124,126,121,4,0,0,22,0,0,0,-1--1--1,,1|(932,45)|
+1,125,126,123,100,0,0,22,0,0,0,-1--1--1,,1|(932,-3)|
+11,126,48,932,21,8,6,33,3,0,0,4,0,0,0
+10,127,Births of Relocated People,1001,21,61,19,40,3,0,0,-1,0,0,0
+12,128,48,772,-32,10,8,0,3,0,0,-1,0,0,0
+1,129,131,128,4,0,0,22,0,0,0,-1--1--1,,1|(774,-3)|
+1,130,131,121,100,0,0,22,0,0,0,-1--1--1,,1|(774,47)|
+11,131,48,774,24,8,6,33,3,0,0,4,0,0,0
+10,132,Deaths of Relocated People,839,24,57,19,40,3,0,0,-1,0,0,0
+10,133,Average Mortality Rate,646,-40,51,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,134,Average Fertility Rate,1172,-60,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,135,133,132,1,0,0,0,0,128,0,-1--1--1,,1|(698,3)|
+1,136,134,127,1,0,0,0,0,128,0,-1--1--1,,1|(1059,-58)|
+1,137,121,132,0,0,0,0,0,128,0,-1--1--1,,1|(847,60)|
+1,138,121,127,1,0,0,0,0,128,0,-1--1--1,,1|(971,49)|
+12,139,48,1135,103,10,8,0,3,0,0,-1,0,0,0
+1,140,142,139,4,0,0,22,0,0,0,-1--1--1,,1|(1086,101)|
+1,141,142,121,100,0,0,22,0,0,0,-1--1--1,,1|(1001,101)|
+11,142,48,1041,101,6,8,34,3,0,0,1,0,0,0
+10,143,Emmigration of Relocated People,1041,128,57,19,40,3,0,0,-1,0,0,0
+10,144,average Emmigration percent,1155,0,72,24,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,145,144,143,1,0,0,0,0,128,0,-1--1--1,,1|(1119,46)|
+1,146,121,143,1,0,0,0,0,128,0,-1--1--1,,1|(959,154)|
+10,147,Population Settled in Government Subsidized Housing,-82,91,80,30,8,130,0,3,-1,0,0,0,128-128-128,0-0-0,|12||0-128-0
+1,148,147,92,1,0,0,0,0,128,0,-1--1--1,,1|(-237,98)|
+1,149,56,7,4,0,0,22,0,0,0,-1--1--1,,1|(236,289)|
+1,150,29,7,100,0,0,22,0,0,0,-1--1--1,,1|(384,288)|
+1,151,33,7,100,0,0,22,0,0,0,-1--1--1,,1|(172,373)|
+1,152,7,30,1,0,0,0,0,64,0,-1--1--1,,1|(453,298)|
+1,153,47,21,1,0,0,0,0,64,0,-1--1--1,,1|(493,458)|
+10,154,Slum Area,297,141,43,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,155,Slum Area,472,133,43,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,156,Slum Area,175,478,43,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,157,45,6,1,0,0,0,0,128,0,-1--1--1,,1|(39,719)|
+1,158,46,13,1,0,0,0,0,128,0,-1--1--1,,1|(581,788)|
+10,159,Housing Affordability Rating,673,1012,67,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,160,159,46,1,0,0,0,0,128,0,-1--1--1,,1|(647,942)|
+1,161,108,26,1,0,0,0,0,128,0,-1--1--1,,1|(1226,636)|
+10,162,housing scarcity ratio,1058,638,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,163,112,9,0,0,0,0,0,64,1,-1--1--1,,1|(1045,814)|
+10,164,Reconversion Flow from Urban Non Residential to Residential Area,1738,414,83,28,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,165,Housing area per household,990,346,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,166,house construction time,1343,-59,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,167,Reconversion Flow from Urban Non Residential to Residential Area,1348,443,83,28,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,168,Total additional Land demand,1504,-34,54,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,169,Conversion to Residential Land,1564,135,58,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,170,Urban Population Renting Houses,220,1008,119,42,3,131,0,0,0,0,0,0
+1,171,173,170,4,0,0,22,0,0,0,-1--1--1,,1|(227,947)|
+1,172,173,1,100,0,0,22,0,0,0,-1--1--1,,1|(227,881)|
+11,173,1980,227,923,8,6,33,3,0,0,4,0,0,0
+10,174,Renting Houses,284,923,49,11,40,3,0,0,-1,0,0,0
+1,175,46,174,1,0,0,0,0,64,0,-1--1--1,,1|(471,917)|
+10,176,Ratio of Renting to Buying,485,994,60,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,177,176,174,1,0,0,0,0,128,0,-1--1--1,,1|(375,977)|
+1,178,176,13,1,0,0,0,0,128,0,-1--1--1,,1|(494,881)|
+1,179,112,170,0,0,0,0,0,64,1,-1--1--1,,1|(694,916)|
+1,180,176,170,0,0,0,0,0,64,1,-1--1--1,,1|(388,998)|
+1,181,176,9,0,0,0,0,0,64,1,-1--1--1,,1|(643,903)|
+1,182,6,17,1,0,0,0,0,128,0,-1--1--1,,1|(132,694)|
+1,183,6,174,1,0,0,0,0,128,0,-1--1--1,,1|(120,879)|
+1,184,6,13,1,0,0,0,0,128,0,-1--1--1,,1|(429,879)|
+1,185,6,70,1,0,0,0,0,128,0,-1--1--1,,1|(361,663)|
+10,186,Fraction of population living illegally,1537,679,70,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-64-0
+10,187,Illegal Slum Population,1406,594,42,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,188,People with No Settlements,1547,563,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,189,Total Populations,1684,577,42,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,190,187,186,1,0,0,0,0,128,0,-1--1--1,,1|(1408,646)|
+1,191,188,186,1,0,0,0,0,128,0,-1--1--1,,1|(1547,615)|
+1,192,189,186,1,0,0,0,0,128,0,-1--1--1,,1|(1647,662)|
+10,193,Housing area per household,1678,344,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,194,Reconversion Flow from Urban Non Residential to Residential Area,1631,226,83,28,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+10,195,Urban Population Renting Houses,-175,-25,61,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,196,195,92,1,0,0,0,0,128,0,-1--1--1,,1|(-305,89)|
+10,197,Houses Available,575,1037,44,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,198,197,13,1,0,0,0,0,128,0,-1--1--1,,1|(556,922)|
+1,199,197,174,1,0,0,0,0,128,0,-1--1--1,,1|(422,1032)|
+1,200,121,120,1,0,0,0,0,128,0,-1--1--1,,1|(839,231)|
+10,201,BASE Average Household size,1143,227,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,202,201,120,0,0,0,0,0,128,0,-1--1--1,,1|(1060,235)|
+1,203,8,120,1,0,0,0,0,128,0,-1--1--1,,1|(931,299)|
+10,204,Relocation Rate,1148,284,50,11,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,205,204,120,1,0,0,0,0,128,0,-1--1--1,,1|(1020,283)|
+10,206,Available Relocation housing base 2010,1110,180,66,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||128-0-64
+1,207,206,120,1,0,0,0,0,128,0,-1--1--1,,1|(985,184)|
+1,208,7,21,1,0,0,0,0,128,0,-1--1--1,,1|(466,436)|
+1,209,17,70,0,0,0,0,0,64,0,-1--1--1,,1|(423,607)|
+10,210,BASE Average Household size,437,842,55,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,211,210,13,0,0,0,0,0,64,0,-1--1--1,,1|(502,804)|
+1,212,210,174,1,0,0,0,0,128,0,-1--1--1,,1|(331,871)|
+10,213,Policy Relocation program Switch,1317,255,61,19,8,3,0,18,0,0,0,0,0-0-0,0-0-0,|12|B|0-255-0
+10,214,New Relocation rate,1191,342,52,19,8,3,0,0,0,0,0,0
+10,215,Relocation policy start year,1395,383,55,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,216,effect on relocation rate,1407,294,46,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,217,additional relocation housing factor,1329,187,64,19,8,3,0,2,0,0,0,0,0-0-0,0-0-0,|12||255-0-0
+10,218,additional housing demand for relocation,1242,97,70,19,8,3,0,0,0,0,0,0
+1,219,217,218,1,0,0,0,0,128,0,-1--1--1,,1|(1303,144)|
+1,220,206,218,1,0,0,0,0,128,0,-1--1--1,,1|(1165,143)|
+10,221,Housing area per household,1284,27,59,19,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,222,204,214,1,0,0,0,0,128,0,-1--1--1,,1|(1143,301)|
+1,223,215,214,1,0,0,0,0,128,0,-1--1--1,,1|(1269,371)|
+1,224,216,214,1,0,0,0,0,128,0,-1--1--1,,1|(1342,293)|
+10,225,Time,1399,336,26,11,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|12||128-128-128
+1,226,225,214,0,0,0,0,0,64,0,-1--1--1,,1|(1314,337)|
+1,227,214,120,1,0,0,0,0,128,0,-1--1--1,,1|(1106,333)|
+1,228,213,120,1,0,0,0,0,128,0,-1--1--1,,1|(1126,262)|
+1,229,213,218,1,0,0,0,0,128,0,-1--1--1,,1|(1228,181)|
+1,230,218,120,1,0,0,0,0,128,0,-1--1--1,,1|(1134,142)|
+///---\\\
+:L<%^E!@
+1:12.vdf
+9:12
+15:0,0,0,5,0,0
+19:100,2
+27:2,
+34:0,
+4:Time
+5:Relocation policy start year
+35:Date
+36:YYYY-MM-DD
+37:2010
+38:1
+39:1
+40:2
+41:0
+42:0
+24:2010
+25:2030
+26:2030
